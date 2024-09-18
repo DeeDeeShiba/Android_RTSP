@@ -35,8 +35,9 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     // Start streaming video using Compose
-                    RTSPVideoStream(rtspUrl = "rtsp://rtspstream:ad4b60f0997496bc959695eff382b136@zephyr.rtsp.stream/movie")
+                    RTSPVideoStream(rtspUrl = "rtsp://Becky:Becky123@10.24.0.102/live")
                     //RTSPVideoStream(rtspUrl = "rtsp://username:password@camera-ip/live") //TODO: FLASH RTSP ON CAMERA
+                    //test stream link --> "rtsp://rtspstream:ad4b60f0997496bc959695eff382b136@zephyr.rtsp.stream/movie"
                 }
             }
         }
@@ -78,8 +79,8 @@ fun RTSPVideoStream(rtspUrl: String) {
 
 @Preview(showBackground = true)
 @Composable
-fun GreetingPreview() {
+fun MainActivityPreview() {
     Android_RTSPTheme {
-
+        MainActivity()
     }
 }
