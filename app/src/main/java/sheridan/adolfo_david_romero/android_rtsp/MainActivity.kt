@@ -5,8 +5,11 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -34,23 +37,38 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    // Start streaming video using Compose
-                    RTSPVideoStream(rtspUrl = "rtsp://Becky:Becky123@10.24.0.102/live")
-                    //RTSPVideoStream(rtspUrl = "rtsp://username:password@camera-ip/live") //TODO: FLASH RTSP ON CAMERA
+                   /*
+                   * If your unplug the camera, the RTSP URL changes
+                   * "rtsp://Test123:Test123@10.24.0.40/live"
+                   */
+
+                    val rtspUrls = listOf(
+                        "rtsp://Becky:Becky123@10.24.0.94/live", //Cam_1
+                        "rtsp://Test123:Test123@10.24.0.40/live" //Cam_2
+                    )
+                    MultipleRTSPStreams(rtspUrls = rtspUrls)
                     //test stream link --> "rtsp://rtspstream:ad4b60f0997496bc959695eff382b136@zephyr.rtsp.stream/movie"
                 }
             }
         }
     }
 }
-
 @Composable
-fun RTSPVideoStream(rtspUrl: String) {
-    // Create an ExoPlayer instance and release it when done
+fun MultipleRTSPStreams(rtspUrls: List<String>) {
+
+    Column(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        rtspUrls.forEach { rtspUrl ->
+            RTSPVideoStream(rtspUrl = rtspUrl, modifier = Modifier.weight(1f))
+        }
+    }
+}
+@Composable
+fun RTSPVideoStream(rtspUrl: String, modifier: Modifier = Modifier) {
     val context = LocalContext.current
     val player = remember {
         ExoPlayer.Builder(context).build().apply {
-            // Set up the media item using the RTSP URL
             val mediaItem = MediaItem.fromUri(rtspUrl)
             setMediaItem(mediaItem)
             prepare()
@@ -64,18 +82,17 @@ fun RTSPVideoStream(rtspUrl: String) {
         }
     }
 
-    // Display the PlayerView using AndroidView inside Compose
     AndroidView(
         factory = {
             PlayerView(context).apply {
                 this.player = player
-                // Set player controls visibility (optional)
                 useController = true
             }
         },
-        modifier = Modifier.fillMaxSize()
+        modifier = modifier.fillMaxSize()
     )
 }
+
 
 @Preview(showBackground = true)
 @Composable
